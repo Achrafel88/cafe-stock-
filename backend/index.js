@@ -4,6 +4,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+const bcrypt = require('bcrypt');
+
 const app = express();
 const port = 5001;
 
@@ -46,12 +48,67 @@ app.get('/api/public/products', (req, res) => {
 // --- AUTH ---
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-  db.query('SELECT * FROM users WHERE username = ?', [username], (err, users) => {
-    if (err) return res.status(500).json({ message: 'DB Error' });
-    if (users.length === 0) return res.status(401).json({ message: 'User not found' });
-    if (password === 'admin123') return res.json({ token: 'fake-token' });
-    res.status(401).json({ message: 'Identifiants invalides' });
+  console.log(`Login attempt for: ${username}`);
+  
+  db.query('SELECT * FROM users WHERE username = ?', [username], async (err, users) => {
+    if (err) {
+      console.error('DB Error during login:', err);
+      return res.status(500).json({ message: 'Erreur de base de données' });
+    }
+    
+    if (users.length === 0) {
+      console.log('Login failed: User not found');
+      return res.status(401).json({ message: 'Utilisateur non trouvé' });
+    }
+    
+    const user = users[0];
+    try {
+      const match = await bcrypt.compare(password, user.password);
+      if (match) {
+        console.log('Login successful');
+        return res.json({ token: 'fake-token', user: { id: user.id, username: user.username } });
+      } else {
+        console.log('Login failed: Invalid password');
+        return res.status(401).json({ message: 'Identifiants invalides' });
+      }
+    } catch (bcryptErr) {
+      console.error('Bcrypt error:', bcryptErr);
+      return res.status(500).json({ message: 'Erreur serveur interne' });
+    }
   });
+});
+
+app.put('/api/admin/update', (req, res) => {
+  const { username, password, userId } = req.body;
+  console.log(`Update attempt for userId: ${userId}`);
+  
+  if (!username) return res.status(400).json({ message: 'Username is required' });
+
+  const performUpdate = async () => {
+    try {
+      let sql = 'UPDATE users SET username = ? WHERE id = ?';
+      let params = [username, userId];
+
+      if (password) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        sql = 'UPDATE users SET username = ?, password = ? WHERE id = ?';
+        params = [username, hashedPassword, userId];
+      }
+
+      db.query(sql, params, (err) => {
+        if (err) {
+          console.error('DB Error during update:', err);
+          return res.status(500).json({ message: 'Erreur de base de données' });
+        }
+        res.json({ message: 'Profil mis à jour' });
+      });
+    } catch (err) {
+      console.error('Error in update route:', err);
+      res.status(500).json({ message: 'Erreur serveur interne' });
+    }
+  };
+
+  performUpdate();
 });
 
 // --- SEEDERS ---
