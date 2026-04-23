@@ -31,12 +31,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 p-6">
-      <form onSubmit={handleLogin} className="bg-slate-900 p-8 rounded-2xl w-full max-w-sm space-y-4">
-        <h2 className="text-white font-bold text-xl">Login Admin</h2>
-        <input type="text" placeholder="Username" className="w-full p-3 rounded bg-slate-800 text-white" value={username} onChange={(e) => setUsername(e.target.value)} />
-        <input type="password" placeholder="Password" className="w-full p-3 rounded bg-slate-800 text-white" value={password} onChange={(e) => setPassword(e.target.value)} />
-        <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded font-bold">Connexion</button>
+    <div className="min-h-screen flex items-center justify-center bg-primary-950 p-6">
+      <form onSubmit={handleLogin} className="bg-card p-8 rounded-2xl w-full max-w-sm space-y-4">
+        <h2 className="text-foreground font-bold text-xl">Login Admin</h2>
+        <input type="text" placeholder="Username" className="w-full p-3 rounded  text-foreground" value={username} onChange={(e) => setUsername(e.target.value)} />
+        <input type="password" placeholder="Password" className="w-full p-3 rounded  text-foreground" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <button type="submit" className="w-full bg-primary-600 text-white p-3 rounded font-bold">Connexion</button>
       </form>
     </div>
   );

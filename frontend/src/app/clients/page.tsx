@@ -64,11 +64,11 @@ export default function ClientsPage() {
           className="glass-card p-4 md:p-6 flex flex-col lg:flex-row gap-4 md:gap-6 justify-between items-center"
         >
           <div className="relative w-full lg:w-96 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-400 group-focus-within:text-primary-600 transition-colors" size={20} />
             <input 
               type="text" 
               placeholder="Rechercher par nom, ICE ou tel..." 
-              className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary-600/20 outline-none font-medium text-sm transition-all"
+              className="w-full pl-12 pr-4 py-3 bg-white bg-primary-100 border border-primary-200 border-primary-100 rounded-2xl focus:ring-2 focus:ring-primary-600/20 outline-none font-medium text-sm transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -95,58 +95,42 @@ export default function ClientsPage() {
                 whileHover={{ y: -5 }}
                 className="glass-card p-6 md:p-8 group relative flex flex-col h-full"
               >
-                <div className="flex justify-between items-start mb-6">
-                  <div className="w-16 h-16 rounded-2xl bg-primary-600/10 flex items-center justify-center text-primary-600 font-black text-2xl shadow-inner">
-                    {client.nom.charAt(0)}
+                <div className="flex justify-between items-start gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-primary-100 flex items-center justify-center text-primary-900 font-black text-lg shadow-sm">
+                    {client.nom.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <button 
                       onClick={() => { setEditingClient(client); setIsModalOpen(true); }}
-                      className="p-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95"
+                      className="p-2 bg-primary-50 text-primary-900 rounded-xl hover:bg-primary-100 transition-all"
                     >
-                      <Edit2 size={18} />
+                      <Edit2 size={16} />
                     </button>
                     <button 
                       onClick={() => { if(confirm('Supprimer ce client ?')) deleteClient(client.id); }}
-                      className="p-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl transition-all shadow-lg shadow-rose-500/20 active:scale-95"
+                      className="p-2 bg-primary-50 text-rose-800 rounded-xl hover:bg-rose-100 transition-all"
                     >
-                      <Trash2 size={18} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
                 
-                <h3 className="text-xl font-black tracking-tight mb-6 line-clamp-1">{client.nom}</h3>
-                
-                <div className="space-y-4 flex-1">
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-primary-50/50 dark:bg-slate-800/50 border border-primary-100/30">
-                    <Hash size={18} className="text-primary-600" />
-                    <div>
-                      <p className="text-[9px] font-black uppercase text-primary-400 tracking-widest">ICE Identifiant</p>
-                      <p className="text-sm font-black font-mono tracking-tight text-slate-700 dark:text-slate-200">{client.ice}</p>
+                <div className="mt-4">
+                  <h3 className="text-base font-black text-foreground mb-4 line-clamp-1">{client.nom}</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-primary-50 p-2.5 rounded-xl border border-primary-100">
+                      <span className="text-[9px] font-black uppercase text-primary-700 block mb-0.5">ICE</span>
+                      <span className="text-xs font-black font-mono text-foreground">{client.ice}</span>
+                    </div>
+                    <div className="bg-primary-50 p-2.5 rounded-xl border border-primary-100">
+                      <span className="text-[9px] font-black uppercase text-primary-700 block mb-0.5">TÉL</span>
+                      <span className="text-xs font-black text-foreground">{client.telephone}</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-indigo-50/50 dark:bg-slate-800/50 border border-indigo-100/30">
-                    <Phone size={18} className="text-indigo-600" />
-                    <div>
-                      <p className="text-[9px] font-black uppercase text-indigo-400 tracking-widest">Téléphone</p>
-                      <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{client.telephone}</p>
-                    </div>
+                  <div className="bg-primary-50 p-2.5 rounded-xl mt-2 border border-primary-100">
+                    <span className="text-[9px] font-black uppercase text-primary-700 block mb-0.5">ADRESSE</span>
+                    <span className="text-xs font-medium text-foreground line-clamp-1">{client.adresse}</span>
                   </div>
-                  <div className="flex items-start gap-3 p-3 rounded-xl bg-blue-50/50 dark:bg-slate-800/50 border border-blue-100/30">
-                    <MapPin size={18} className="text-blue-600 mt-0.5" />
-                    <div>
-                      <p className="text-[9px] font-black uppercase text-blue-400 tracking-widest">Adresse</p>
-                      <p className="text-xs font-medium leading-relaxed line-clamp-2 text-slate-700 dark:text-slate-200">{client.adresse}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 pt-6 border-t border-[var(--card-border)] flex items-center justify-between text-slate-400">
-                  <div className="flex items-center gap-2">
-                    <Calendar size={14} />
-                    <span className="text-[10px] font-bold uppercase tracking-wider">{formatDate(client.date_creation)}</span>
-                  </div>
-                  <ChevronRight size={16} className="opacity-20 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                 </div>
               </motion.div>
             ))}
@@ -155,10 +139,10 @@ export default function ClientsPage() {
 
         {filteredClients.length === 0 && (
           <div className="py-32 text-center flex flex-col items-center">
-            <div className="w-24 h-24 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-300 mb-6">
+            <div className="w-24 h-24 rounded-full bg-primary-100  flex items-center justify-center text-primary-300 mb-6">
               <User size={48} />
             </div>
-            <p className="text-slate-400 font-black italic uppercase tracking-widest text-xs">Aucun client trouvé dans la base.</p>
+            <p className="text-primary-400 font-black italic uppercase tracking-widest text-xs">Aucun client trouvé dans la base.</p>
           </div>
         )}
 
@@ -171,7 +155,7 @@ export default function ClientsPage() {
                 animate={{ opacity: 1 }} 
                 exit={{ opacity: 0 }}
                 onClick={() => setIsModalOpen(false)}
-                className="absolute inset-0 bg-slate-950/60 backdrop-blur-md"
+                className="absolute inset-0 bg-primary-950/60 backdrop-blur-md"
               />
               <motion.div 
                 initial={{ scale: 0.9, y: 20, opacity: 0 }}
@@ -192,7 +176,7 @@ export default function ClientsPage() {
                 </div>
                 <form onSubmit={handleSaveClient} className="p-8 space-y-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Nom / Raison Sociale</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primary-400">Nom / Raison Sociale</label>
                     <input 
                       name="nom" 
                       defaultValue={editingClient?.nom} 
@@ -204,7 +188,7 @@ export default function ClientsPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">ICE</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary-400">ICE</label>
                       <input 
                         name="ice" 
                         defaultValue={editingClient?.ice} 
@@ -214,7 +198,7 @@ export default function ClientsPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Téléphone</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-primary-400">Téléphone</label>
                       <input 
                         name="telephone" 
                         defaultValue={editingClient?.telephone} 
@@ -225,7 +209,7 @@ export default function ClientsPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Adresse Complète</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-primary-400">Adresse Complète</label>
                     <textarea 
                       name="adresse" 
                       defaultValue={editingClient?.adresse} 
@@ -239,7 +223,7 @@ export default function ClientsPage() {
                     <button 
                       type="button" 
                       onClick={() => setIsModalOpen(false)}
-                      className="flex-1 px-8 py-4 rounded-2xl border border-[var(--card-border)] font-bold text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors uppercase text-xs tracking-widest"
+                      className="flex-1 px-8 py-4 rounded-2xl border border-[var(--card-border)] font-bold text-primary-500 hover:bg-primary-50  transition-colors uppercase text-xs tracking-widest"
                     >
                       Annuler
                     </button>

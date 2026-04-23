@@ -7,52 +7,64 @@ import { useData } from '@/context/DataContext';
 
 export default function InvoiceView({ sale }: { sale: Sale }) {
   const { clients } = useData();
-  // Robust lookup using string comparison
-  const client = clients.find(c => c.id?.toString() === sale.clientId?.toString());
+  
+  // Debugging
+  console.log("DEBUG: Invoice received sale:", sale);
+  console.log("DEBUG: Available clients:", clients);
+  console.log("DEBUG: Looking for clientId:", sale.clientId);
+
+  // Use joined data from backend first, fallback to search if needed
+  const client = {
+    nom: sale.client_nom || 'Client Inconnu',
+    adresse: clients.find(c => c.id?.toString() === sale.client_id?.toString())?.adresse || '',
+    ice: clients.find(c => c.id?.toString() === sale.client_id?.toString())?.ice || 'N/A',
+    id: sale.client_id
+  };
+  
   const identity = IDENTITIES[sale.type_vente];
 
   return (
     <div className="bg-white text-black min-h-[1000px] p-4 md:p-10 font-sans max-w-[850px] mx-auto print:m-0 print:p-6 print:min-h-0">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start mb-4 md:mb-8 border-b-2 border-black pb-4 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start mb-4 md:mb-8 border-b-2 border-primary-900 pb-4 gap-4">
         <div className="flex-1">
           <h1 className="text-xl md:text-2xl font-black uppercase leading-tight mb-1">{identity.header}</h1>
           <p className="text-[11px] md:text-sm font-bold uppercase mb-2">{identity.subtitle}</p>
           <p className="text-[11px] md:text-sm">Tél: <span className="font-bold">{identity.tel}</span></p>
         </div>
         <div className="text-left md:text-right flex flex-col items-start md:items-end">
-          <div className="bg-black text-white px-4 py-2 font-black text-lg md:text-xl mb-4">
+          <div className="bg-black bg-primary-800 text-foreground text-primary-100 px-4 py-2 font-black text-lg md:text-xl mb-4">
             FACTURE N° : {sale.numero_facture}
           </div>
           <div className="text-[11px] md:text-sm space-y-0.5">
             <p>Date Facture : <span className="font-bold">{formatDate(sale.date_facture)}</span></p>
-            <p>N° Client : <span className="font-bold">{client?.id?.toString().padStart(5, '0')}</span></p>
+            <p>N° Client : <span className="font-bold">{client?.id?.toString().padStart(5, '0') || 'N/A'}</span></p>
           </div>
         </div>
       </div>
 
       {/* Client Info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4">
-        <div className="border border-black p-3 rounded-sm relative">
-          <h3 className="text-[9px] font-black uppercase bg-black text-white px-2 py-0.5 inline-block mb-2">DESTINATAIRE</h3>
+        <div className="border border-primary-900 p-3 rounded-sm relative">
+          <h3 className="text-[9px] font-black uppercase bg-black bg-primary-800 text-foreground text-primary-100 px-2 py-0.5 inline-block mb-2">DESTINATAIRE</h3>
           <p className="font-black text-base md:text-lg uppercase leading-tight">{client?.nom}</p>
           <p className="text-[11px] md:text-sm mt-1 whitespace-pre-wrap leading-tight">{client?.adresse}</p>
           <div className="mt-3 pt-1.5 border-t border-dashed border-gray-300">
-            <p className="text-[9px] font-bold uppercase text-gray-500">ICE Client</p>
+            <p className="text-[9px] font-bold uppercase text-primary-500">ICE Client</p>
             <p className="text-sm md:text-base font-black tracking-wider">{client?.ice || 'N/A'}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-2 text-[10px] md:text-xs">
-          <div className="border border-black p-2">
-            <p className="font-bold text-gray-500 mb-0.5 uppercase">Mode Paiement</p>
+          <div className="border border-primary-900 p-2">
+            <p className="font-bold text-primary-500 mb-0.5 uppercase">Mode Paiement</p>
             <p className="font-black uppercase">{sale.mode_paiement}</p>
           </div>
-          <div className="border border-black p-2">
-            <p className="font-bold text-gray-500 mb-0.5 uppercase">Mode Livraison</p>
+          <div className="border border-primary-900 p-2">
+            <p className="font-bold text-primary-500 mb-0.5 uppercase">Mode Livraison</p>
             <p className="font-black uppercase">{sale.mode_livraison || '-'}</p>
           </div>
-          <div className="border border-black p-2 col-span-2">
-            <p className="font-bold text-gray-500 mb-0.5 uppercase">Note / Observation</p>
+          <div className="border border-primary-900 p-2 col-span-2">
+            <p className="font-bold text-primary-500 mb-0.5 uppercase">Note / Observation</p>
             <p className="font-medium italic line-clamp-1 text-[10px]">{sale.note || 'N/A'}</p>
           </div>
         </div>
@@ -60,30 +72,30 @@ export default function InvoiceView({ sale }: { sale: Sale }) {
 
       {/* Table */}
       <div className="overflow-x-auto mb-4">
-        <table className="w-full border-collapse border-2 border-black min-w-[500px]">
+        <table className="w-full border-collapse border-2 border-primary-900 min-w-[500px]">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border-2 border-black px-3 py-1 text-left uppercase text-[10px] md:text-xs font-black">Désignation</th>
-              <th className="border-2 border-black px-3 py-1 text-center uppercase text-[10px] md:text-xs font-black w-16">Qté</th>
-              <th className="border-2 border-black px-3 py-1 text-right uppercase text-[10px] md:text-xs font-black w-24">Prix U.</th>
-              <th className="border-2 border-black px-3 py-1 text-right uppercase text-[10px] md:text-xs font-black w-28">Total TTC</th>
+            <tr className="bg-primary-50">
+              <th className="border-2 border-primary-900 px-3 py-1 text-left uppercase text-[10px] md:text-xs font-black">Désignation</th>
+              <th className="border-2 border-primary-900 px-3 py-1 text-center uppercase text-[10px] md:text-xs font-black w-16">Qté</th>
+              <th className="border-2 border-primary-900 px-3 py-1 text-right uppercase text-[10px] md:text-xs font-black w-24">Prix U.</th>
+              <th className="border-2 border-primary-900 px-3 py-1 text-right uppercase text-[10px] md:text-xs font-black w-28">Total TTC</th>
             </tr>
           </thead>
           <tbody>
-            {sale.items.map((item, i) => (
-              <tr key={i} className="border-2 border-black">
-                <td className="border-2 border-black px-3 py-1.5 text-xs md:text-sm font-bold uppercase">{item.designation}</td>
-                <td className="border-2 border-black px-3 py-2 text-center text-xs md:text-sm font-bold">{item.quantite}</td>
-                <td className="border-2 border-black px-3 py-2 text-right text-xs md:text-sm font-mono">{formatCurrency(item.prix_unitaire_ttc)}</td>
-                <td className="border-2 border-black px-3 py-2 text-right text-xs md:text-sm font-black font-mono">{formatCurrency(item.total_ttc)}</td>
+            {(sale.items || []).map((item, i) => (
+              <tr key={i} className="border-2 border-primary-900">
+                <td className="border-2 border-primary-900 px-3 py-1.5 text-xs md:text-sm font-bold uppercase">{item.designation || 'N/A'}</td>
+                <td className="border-2 border-primary-900 px-3 py-2 text-center text-xs md:text-sm font-bold">{item.quantite}</td>
+                <td className="border-2 border-primary-900 px-3 py-2 text-right text-xs md:text-sm font-mono">{formatCurrency(item.prix_unitaire_ttc)}</td>
+                <td className="border-2 border-primary-900 px-3 py-2 text-right text-xs md:text-sm font-black font-mono">{formatCurrency(item.total_ttc)}</td>
               </tr>
             ))}
             {[...Array(Math.max(0, 3 - sale.items.length))].map((_, i) => (
-              <tr key={`empty-${i}`} className="border-2 border-black h-8">
-                <td className="border-2 border-black px-3 py-1.5"></td>
-                <td className="border-2 border-black px-3 py-1.5"></td>
-                <td className="border-2 border-black px-3 py-1.5"></td>
-                <td className="border-2 border-black px-3 py-1.5"></td>
+              <tr key={`empty-${i}`} className="border-2 border-primary-900 h-8">
+                <td className="border-2 border-primary-900 px-3 py-1.5"></td>
+                <td className="border-2 border-primary-900 px-3 py-1.5"></td>
+                <td className="border-2 border-primary-900 px-3 py-1.5"></td>
+                <td className="border-2 border-primary-900 px-3 py-1.5"></td>
               </tr>
             ))}
           </tbody>
@@ -93,7 +105,7 @@ export default function InvoiceView({ sale }: { sale: Sale }) {
       {/* Totals */}
       <div className="flex flex-col md:flex-row justify-between items-start gap-4 mb-4">
         <div className="flex-1 w-full pr-0 md:pr-4">
-          <p className="text-[9px] uppercase font-black mb-1 underline text-gray-500">Arrêtée la présente a la somme TTC :</p>
+          <p className="text-[9px] uppercase font-black mb-1 underline text-primary-500">Arrêtée la présente a la somme TTC :</p>
           <p className="text-xs md:text-sm font-black uppercase leading-tight italic bg-gray-50 p-3 border border-dashed border-gray-400">
             {numberToFrenchWords(sale.total_ttc)}
           </p>
@@ -103,15 +115,15 @@ export default function InvoiceView({ sale }: { sale: Sale }) {
           </div>
         </div>
         <div className="w-full md:w-56 space-y-0 text-[10px] md:text-xs">
-          <div className="flex justify-between border-2 border-black border-b-0 p-1.5">
+          <div className="flex justify-between border-2 border-primary-900 border-b-0 p-1.5">
             <span className="font-black uppercase">TOTAL HT</span>
-            <span className="font-mono">{formatCurrency(sale.total_ht)}</span>
+            <span className="font-mono">{formatCurrency(sale.total_ttc / 1.2)}</span>
           </div>
-          <div className="flex justify-between border-2 border-black border-b-0 p-1.5">
+          <div className="flex justify-between border-2 border-primary-900 border-b-0 p-1.5">
             <span className="font-black uppercase">TVA (20%)</span>
-            <span className="font-mono">{formatCurrency(sale.total_tva)}</span>
+            <span className="font-mono">{formatCurrency(sale.total_ttc - (sale.total_ttc / 1.2))}</span>
           </div>
-          <div className="flex justify-between border-2 border-black bg-gray-100 p-2">
+          <div className="flex justify-between border-2 border-primary-900 bg-primary-50 p-2">
             <span className="font-black uppercase text-xs">TOTAL TTC</span>
             <span className="text-sm md:text-base font-black font-mono">{formatCurrency(sale.total_ttc)}</span>
           </div>
@@ -119,7 +131,7 @@ export default function InvoiceView({ sale }: { sale: Sale }) {
       </div>
 
       {/* Business Footer */}
-      <div className="mt-auto pt-4 border-t border-gray-300 text-[9px] text-gray-500 text-center leading-tight">
+      <div className="mt-auto pt-4 border-t border-gray-300 text-[9px] text-primary-500 text-center leading-tight">
         <p className="font-bold text-black uppercase mb-1">{identity.footer}</p>
         <div className="flex justify-center gap-3 flex-wrap">
           {identity.patente && <span>Patente: <span className="font-bold text-black">{identity.patente}</span></span>}
@@ -145,7 +157,7 @@ export default function InvoiceView({ sale }: { sale: Sale }) {
           section { padding: 0 !important; overflow: visible !important; }
           aside { display: none !important; }
           header { display: none !important; }
-          .bg-slate-950 { background: white !important; }
+          .bg-primary-950 { background: white !important; }
           .max-w-5xl { max-width: none !important; }
           div { overflow: visible !important; }
         }

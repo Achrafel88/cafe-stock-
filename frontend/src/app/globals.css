@@ -4,77 +4,50 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   
-  --color-primary-50: #f5f7ff;
-  --color-primary-100: #ebf0fe;
-  --color-primary-200: #dee5fd;
-  --color-primary-300: #c4d1fb;
-  --color-primary-400: #a1b3f7;
-  --color-primary-500: #7a8cf2;
-  --color-primary-600: #5c6ceb;
-  --color-primary-700: #4a56d9;
-  --color-primary-800: #4047b1;
-  --color-primary-900: #383e8e;
-  --color-primary-950: #212453;
+  /* Updated Coffee Palette */
+  --color-primary-50: #f5f0ed;
+  --color-primary-100: #e6deda;
+  --color-primary-500: #a67c52;
+  --color-primary-600: #8b5e3c;
+  --color-primary-700: #5d4a41;
+  --color-primary-800: #3d2b24;
+  --color-primary-900: #2d1e18;
   
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
   
-  --shadow-premium: 0 20px 50px -12px rgba(92, 108, 235, 0.15);
-  --shadow-premium-dark: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-premium: 0 10px 30px -5px rgba(93, 74, 65, 0.1);
 }
 
 :root {
-  /* Light Mode - Tinted Background */
-  --background: #f0f4ff; /* Indigo-50 tint */
-  --foreground: #1e293b; /* Dark Slate for text */
+  --background: #fdfcf9;
+  --foreground: #3d2b24;
   --card: #ffffff;
-  --card-border: #dbeafe;
-  --sidebar: #ffffff;
-}
-
-.dark {
-  /* Dark Mode - Deep Navy */
-  --background: #050810;
-  --foreground: #e2e8f0; /* Light Blue-Gray for text */
-  --card: #0f172a;
-  --card-border: #1e293b;
-  --sidebar: #0f172a;
+  --card-border: #e6deda;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  transition: all 0.5s ease;
-  overflow-x: hidden;
+  transition: all 0.3s ease;
 }
 
 @layer components {
   .glass-card {
     background-color: var(--card);
     border: 1px solid var(--card-border);
-    border-radius: var(--radius-2xl);
+    border-radius: 1.5rem;
     box-shadow: var(--shadow-premium);
-    transition: all 0.3s ease;
-  }
-  
-  .dark .glass-card {
-    box-shadow: var(--shadow-premium-dark);
-    background-color: #0f172a;
-    border-color: #1e293b;
   }
   
   .input-field {
     width: 100%;
-    background-color: var(--card);
+    background-color: var(--background);
     border: 1px solid var(--card-border);
-    border-radius: var(--radius-xl);
-    padding: 0.75rem 1.25rem;
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
     color: var(--foreground);
-    font-weight: 600;
+    font-weight: 500;
   }
 }
-
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { background: #5c6ceb; border-radius: 10px; }

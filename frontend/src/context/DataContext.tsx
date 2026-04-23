@@ -103,6 +103,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateClient = async (id: string, c: Partial<Client>) => {
+    await fetch(`${API_URL}/clients/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(c)
+    });
     await refreshData();
   };
 
